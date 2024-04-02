@@ -1,16 +1,21 @@
+import io
 import logging
 from flask import Flask, jsonify, request
-from models.plate_reader import PlateReader, InvalidImage
-from image_provider_client import ImageReaderClient
-import logging
-import io
-from schema import read_plate_number_schema
-from requests import HTTPError
 from marshmallow import ValidationError
+from requests import HTTPError
+
+from exceptions import RequestsNotFoundException, RequestsUnavailableException
+from image_provider_client import ImageReaderClient
+from models.plate_reader import PlateReader, InvalidImage
+from schema import read_plate_number_schema
+
+# todo: wroong imports order
+from constants import IMAGE_SERVICE_HOST
 
 app = Flask(__name__)
 plate_reader = PlateReader.load_from_file('./model_weights/plate_reader_model.pth')
-image_provider_client = ImageReaderClient(host='http://178.154.220.122:7777')
+# image_provider_client = ImageReaderClient(host='http://178.154.220.122:7777')
+image_provider_client = ImageReaderClient(host=IMAGE_SERVICE_HOST)
 
 
 @app.route('/')
@@ -33,15 +38,12 @@ def greeting():
 def get_auto_numbers_by_ids(image_ids):
     try:
         images = image_provider_client.get_images(image_ids)
-    except HTTPError as e:
-        status = e.response.status_code
-        if status == 404:
-            return jsonify({'error': 'Wrong image id'}), 404
-        else:
-            return jsonify({'error': 'Getting images error'}), status
+    except RequestsNotFoundException:
+        return jsonify({'error': 'Wrong image id'}), 404
+    except RequestsUnavailableException:
+        return jsonify({'error': 'Service unavailable'}), 504
     except Exception as e:
-        # return jsonify({'error': 'Getting images error'}), 500
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Getting images error'}), 500
         
     result = {}
     for ind, im in enumerate(images):
@@ -64,15 +66,7 @@ def get_auto_numbers_by_ids(image_ids):
 def read_plate_number(image_id:int):
     image_ids = [image_id]
 
-    result = get_auto_numbers_by_ids(image_ids)
-
-    return result
-    # if isinstance(result, tuple):
-    #     return result
-
-    # return {
-    #     'plate_number': result.get(image_id),
-    # }
+    return get_auto_numbers_by_ids(image_ids)
 
 
 @app.route('/readPlateNumber', methods=['POST'])
@@ -96,6 +90,5 @@ if __name__ == '__main__':
         level=logging.INFO,
     )
 
-    # app.config['JSON_AS_ASCII'] = False
     app.json.ensure_ascii = False
     app.run(host='0.0.0.0', port=8080, debug=True)
