@@ -30,7 +30,7 @@ class ImageReaderClient:
             if http_exception.response.status_code // 100 == 5:
                 raise RequestsUnavailableException from http_exception
         except RequestException as requests_exception:
-            raise RequestsUnavailableException
+            raise RequestsUnavailableException from requests_exception
 
     def get_images(self, image_ids):
         """Getting a list of images"""
