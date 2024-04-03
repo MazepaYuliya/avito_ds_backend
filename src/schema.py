@@ -6,7 +6,6 @@ class ReadPlateNumberSchema(Schema):
     """Schema for validating input of view read_plate_numbers"""
     image_ids = fields.List(fields.Integer(), required=True)
 
-
     @staticmethod
     def validate_image_ids(data):
         """Additional validation of images ids"""
@@ -15,5 +14,6 @@ class ReadPlateNumberSchema(Schema):
         for image_id in data:
             if not isinstance(image_id, int):
                 raise ValidationError('Image IDs must be integers.')
+
 
 read_plate_number_schema = ReadPlateNumberSchema()

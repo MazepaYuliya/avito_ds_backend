@@ -1,9 +1,9 @@
 """Client for getting images"""
+from multiprocessing.pool import ThreadPool
+
 import requests
 from requests import HTTPError
 from requests.exceptions import RequestException
-
-from multiprocessing.pool import ThreadPool
 
 from constants import IMAGE_SERVICE_HOST
 from exceptions import RequestsNotFoundException, RequestsUnavailableException

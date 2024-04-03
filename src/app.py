@@ -45,16 +45,16 @@ def get_auto_numbers_by_ids(image_ids):
         return jsonify({'error': 'Wrong image id'}), 404
     except RequestsUnavailableException:
         return jsonify({'error': 'Service unavailable'}), 504
-    except Exception as e:
+    except Exception:
         return jsonify({'error': 'Getting images error'}), 500
 
     result = {}
-    for ind, im in enumerate(images):
-        im = io.BytesIO(im)
+    for ind, image_bytes in enumerate(images):
+        image = io.BytesIO(image_bytes)
         image_id = image_ids[ind]
 
         try:
-            auto_number = plate_reader.read_text(im)
+            auto_number = plate_reader.read_text(image)
         except InvalidImage:
             error_text = f'invalid image {image_id}'
             logging.error(error_text)
