@@ -1,5 +1,1 @@
-import os
-
-# IMAGE_SERVICE_HOST = os.environ.get('IMAGE_SERVICE_HOST')
-
-IMAGE_SERVICE_HOST = "http://178.154.220.122:7777"
+IMAGE_SERVICE_HOST = os.environ.get('IMAGE_SERVICE_HOST')

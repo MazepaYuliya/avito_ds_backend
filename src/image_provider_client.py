@@ -1,12 +1,12 @@
 import requests
 from requests import HTTPError
 from requests.exceptions import RequestException
-# todo: wroong imports order
-from constants import IMAGE_SERVICE_HOST
-
-from exceptions import RequestsNotFoundException, RequestsUnavailableException
 
 from multiprocessing.pool import ThreadPool
+
+from constants import IMAGE_SERVICE_HOST
+from exceptions import RequestsNotFoundException, RequestsUnavailableException
+
 
 class ImageReaderClient:
     def __init__(self, host: str):
@@ -37,7 +37,6 @@ class ImageReaderClient:
 
 
 if __name__ == '__main__':
-    # client = ImageReaderClient(host='http://178.154.220.122:7777')
     client = ImageReaderClient(host=IMAGE_SERVICE_HOST)
     res = client.get_image(9965)
     print(res)

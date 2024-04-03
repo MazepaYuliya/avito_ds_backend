@@ -14,7 +14,6 @@ class PlateReaderClient:
 
         return res.json()
 
-
     def greeting(self, user: str):
         res = requests.post(
             f'{self.host}/readPlateNumber',

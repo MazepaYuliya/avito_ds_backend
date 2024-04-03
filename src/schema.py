@@ -1,7 +1,9 @@
 from marshmallow import Schema, fields, ValidationError
 
+
 class ReadPlateNumberSchema(Schema):
     image_ids = fields.List(fields.Integer(), required=True)
+
 
     @staticmethod
     def validate_image_ids(data):
