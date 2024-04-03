@@ -1,3 +1,4 @@
+"""Client for getting images"""
 import requests
 from requests import HTTPError
 from requests.exceptions import RequestException
@@ -9,10 +10,13 @@ from exceptions import RequestsNotFoundException, RequestsUnavailableException
 
 
 class ImageReaderClient:
+    """Class for getting images from external service"""
     def __init__(self, host: str):
+        """Initialization of ImageReaderClient"""
         self.host = host
 
     def get_image(self, image_id):
+        """Getting one image"""
         try:
             response = requests.get(
                 f'{self.host}/images/{image_id}',
@@ -29,6 +33,7 @@ class ImageReaderClient:
             raise RequestsUnavailableException
 
     def get_images(self, image_ids):
+        """Getting a list of images"""
         images = []
         with ThreadPool() as pool:
             for image in pool.map(self.get_image, image_ids):
